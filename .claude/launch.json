@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "flask-app",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "flask", "run", "--port", "5000"],
+      "port": 5000,
+      "env": {
+        "FLASK_APP": "app.py",
+        "FLASK_DEBUG": "1"
+      }
+    }
+  ]
+}
