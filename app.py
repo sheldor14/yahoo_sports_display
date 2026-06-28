@@ -1,31 +1,39 @@
-import os
 import base64
+import configparser
 import secrets
 import requests
 from pathlib import Path
 from urllib.parse import urlencode
 from flask import Flask, render_template, jsonify, request, redirect, session, url_for
-from dotenv import load_dotenv, set_key
 
-load_dotenv()
+CONFIG_PATH = Path(__file__).parent / "config.txt"
 
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY") or secrets.token_hex(32)
+_startup_cfg = configparser.ConfigParser()
+_startup_cfg.read(CONFIG_PATH)
+app.secret_key = _startup_cfg.get("flask", "secret_key", fallback=None) or secrets.token_hex(32)
 
 YAHOO_API_BASE = "https://fantasysports.yahooapis.com/fantasy/v2"
 YAHOO_AUTH_URL = "https://api.login.yahoo.com/oauth2/request_auth"
 YAHOO_TOKEN_URL = "https://api.login.yahoo.com/oauth2/get_token"
-ENV_PATH = Path(__file__).parent / ".env"
 
 
 # ── Config helpers ─────────────────────────────────────────────────────────────
 
+def _load_config() -> configparser.ConfigParser:
+    config = configparser.ConfigParser()
+    config.read(CONFIG_PATH)
+    return config
+
+
 def get_credentials() -> dict:
+    config = _load_config()
+    yahoo = config["yahoo"] if "yahoo" in config else {}
     return {
-        "client_id": os.getenv("YAHOO_CLIENT_ID", ""),
-        "client_secret": os.getenv("YAHOO_CLIENT_SECRET", ""),
-        "access_token": os.getenv("YAHOO_ACCESS_TOKEN", ""),
-        "refresh_token": os.getenv("YAHOO_REFRESH_TOKEN", ""),
+        "client_id": yahoo.get("client_id", ""),
+        "client_secret": yahoo.get("client_secret", ""),
+        "access_token": yahoo.get("access_token", ""),
+        "refresh_token": yahoo.get("refresh_token", ""),
     }
 
 
@@ -38,12 +46,13 @@ def _basic_auth_header() -> str:
 
 
 def save_tokens(access_token: str, refresh_token: str) -> None:
-    if not ENV_PATH.exists():
-        ENV_PATH.touch()
-    set_key(str(ENV_PATH), "YAHOO_ACCESS_TOKEN", access_token)
-    set_key(str(ENV_PATH), "YAHOO_REFRESH_TOKEN", refresh_token)
-    os.environ["YAHOO_ACCESS_TOKEN"] = access_token
-    os.environ["YAHOO_REFRESH_TOKEN"] = refresh_token
+    config = _load_config()
+    if "yahoo" not in config:
+        config["yahoo"] = {}
+    config["yahoo"]["access_token"] = access_token
+    config["yahoo"]["refresh_token"] = refresh_token
+    with CONFIG_PATH.open("w") as f:
+        config.write(f)
 
 
 # ── Yahoo API ──────────────────────────────────────────────────────────────────
@@ -214,7 +223,7 @@ def index():
 def auth_start():
     creds = get_credentials()
     if not creds["client_id"]:
-        return "YAHOO_CLIENT_ID not configured in .env", 400
+        return "client_id not configured in config.txt", 400
     state = secrets.token_urlsafe(16)
     session["oauth_state"] = state
     callback_url = url_for("auth_callback", _external=True)

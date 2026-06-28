@@ -119,12 +119,12 @@
       <li>Go to <strong>developer.yahoo.com/apps</strong> and create an app</li>
       <li>Set the <strong>Redirect URI</strong> to <code>http://localhost:5000/auth/callback</code></li>
       <li>Enable the <strong>Fantasy Sports</strong> API permission (Read)</li>
-      <li>Copy the Client ID and Client Secret into your <code>.env</code> file (see <code>.env.example</code>)</li>
+      <li>Copy the Client ID and Client Secret into your <code>config.txt</code> file (see <code>config.example.txt</code>)</li>
       <li>Restart the server, then click <strong>Authenticate with Yahoo</strong></li>
     </ol>
   </div>
   <div class="auth-strip warn">
-    ⚠️ &nbsp;<strong>Not configured.</strong> &nbsp;Add <code>YAHOO_CLIENT_ID</code> and <code>YAHOO_CLIENT_SECRET</code> to <code>.env</code> and restart.
+    ⚠️ &nbsp;<strong>Not configured.</strong> &nbsp;Add <code>client_id</code> and <code>client_secret</code> to <code>config.txt</code> and restart.
   </div>
   {% elif not is_authenticated %}
   <div class="auth-strip warn">

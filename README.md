@@ -20,9 +20,9 @@ pip install -r requirements.txt
 
 **3. Configure your credentials**
 ```
-cp .env.example .env
+cp config.example.txt config.txt
 ```
-Fill in `YAHOO_CLIENT_ID` and `YAHOO_CLIENT_SECRET` from your Yahoo app.
+Fill in `client_id` and `client_secret` under the `[yahoo]` section.
 
 **4. Run the server**
 ```
@@ -31,7 +31,7 @@ python app.py
 
 **5. Authenticate**
 
-Open `http://localhost:5000`, follow the setup banner to connect your Yahoo account. The OAuth tokens are saved back to `.env` automatically and refresh silently when they expire.
+Open `http://localhost:5000`, follow the setup banner to connect your Yahoo account. The OAuth tokens are saved back to `config.txt` automatically and refresh silently when they expire.
 
 ## Usage
 

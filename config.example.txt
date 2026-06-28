@@ -1,0 +1,16 @@
+; Yahoo Developer App credentials
+; Create an app at https://developer.yahoo.com/apps/
+; Set Redirect URI to: http://localhost:5000/auth/callback
+; Enable Fantasy Sports API permission (Read)
+[yahoo]
+client_id = your_client_id_here
+client_secret = your_client_secret_here
+
+; Filled in automatically after authenticating via the web UI
+access_token =
+refresh_token =
+
+; Flask session secret
+; Generate with: python -c "import secrets; print(secrets.token_hex(32))"
+[flask]
+secret_key =
