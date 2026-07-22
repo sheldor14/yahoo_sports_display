@@ -160,11 +160,19 @@ def _to_float(v) -> float | None:
 
 def compute_rankings(teams: list[dict], cats: list[dict]) -> list[dict]:
     """
-    Rank each team 1–N for every stat (N = best).
-    Tied teams share the average of the positions they occupy.
-    Teams missing a stat value are ranked last (rank 1).
+    Score each team 1–N for every stat (N = best) and sum across stats.
+
+    Teams are ordered worst→best, so the team in position k (1-indexed)
+    scores k points. When teams tie on a stat, they split the point values
+    of the positions they collectively occupy — each tied team gets the
+    average. Example: a 3-way tie for 2nd in a 12-team league occupies the
+    positions worth 11, 10, and 9, so each of the three scores (11+10+9)/3 = 10.
+
+    A team with no value for a stat (e.g. ERA with 0 innings pitched, which
+    Yahoo returns as "-") is not ranked for it: its score is recorded as None
+    so the UI can flag it, and it contributes 0 to the team's total. Only the
+    teams that do have a value are ranked, among themselves.
     """
-    n = len(teams)
     result = {
         t["name"]: {"name": t["name"], "stats": t["stats"], "ranks": {}, "total": 0.0}
         for t in teams
@@ -174,35 +182,33 @@ def compute_rankings(teams: list[dict], cats: list[dict]) -> list[dict]:
         sid = cat["stat_id"]
         higher_better = cat["sort_order"] == "1"
 
-        pairs = [(t["name"], _to_float(t["stats"].get(sid))) for t in teams]
+        present, missing = [], []
+        for t in teams:
+            value = _to_float(t["stats"].get(sid))
+            (missing if value is None else present).append((t["name"], value))
 
-        # Sort worst→best so index 0 = rank 1, index n-1 = rank n.
-        # None values are always worst (pushed to the front).
-        def sort_key(p):
-            v = p[1]
-            if v is None:
-                return (1, 0)
-            return (0, v if higher_better else -v)
+        # Teams with no value for this stat are flagged (None) and score nothing.
+        for name, _ in missing:
+            result[name]["ranks"][sid] = None
 
-        ordered = sorted(pairs, key=sort_key)
-
-        # Assign ranks with tie-averaging
+        # Rank only the teams that have a value, worst->best (position k = k points).
+        present.sort(key=lambda p: p[1] if higher_better else -p[1])
+        m = len(present)
         i = 0
-        while i < n:
+        while i < m:
             j = i
-            while (
-                j + 1 < n
-                and ordered[j][1] is not None
-                and ordered[j][1] == ordered[j + 1][1]
-            ):
+            while j + 1 < m and present[j + 1][1] == present[j][1]:
                 j += 1
-            avg_rank = (i + 1 + j + 1) / 2
+
+            # This group occupies positions i+1 .. j+1; each team gets their average.
+            positions = range(i + 1, j + 2)
+            score = sum(positions) / len(positions)
             for k in range(i, j + 1):
-                result[ordered[k][0]]["ranks"][sid] = avg_rank
+                result[present[k][0]]["ranks"][sid] = score
             i = j + 1
 
     for r in result.values():
-        r["total"] = sum(r["ranks"].values())
+        r["total"] = sum(v for v in r["ranks"].values() if v is not None)
 
     return sorted(result.values(), key=lambda x: x["total"], reverse=True)
 
@@ -290,4 +296,6 @@ def api_rankings():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Yahoo OAuth requires an HTTPS redirect URI, so serve over TLS even locally.
+    # 'adhoc' generates a throwaway self-signed cert (browser will warn — that's fine).
+    app.run(debug=True, ssl_context="adhoc")

@@ -74,7 +74,12 @@
     .rank-top  { background: #dcfce7; color: #15803d; }
     .rank-mid  { background: #fef9c3; color: #a16207; }
     .rank-bot  { background: #fee2e2; color: #dc2626; }
+    .rank-na   { background: #eef0f4; color: #9aa0ac; border: 1px dashed #cbd0da; }
     .stat-raw  { display: block; font-size: 10px; color: #bbb; margin-top: 2px; line-height: 1; }
+
+    /* missing-data note under the table */
+    .na-note { margin-top: 14px; font-size: 12px; color: #8a6d1f; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 9px 13px; }
+    .na-note code { background: rgba(0,0,0,0.05); padding: 1px 5px; border-radius: 4px; }
 
     /* position pill */
     .pos { display: inline-flex; width: 22px; height: 22px; border-radius: 50%; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; margin-right: 7px; flex-shrink: 0; vertical-align: middle; }
@@ -209,6 +214,8 @@
           <tbody>
     `;
 
+    let hasMissing = false;
+
     teams.forEach((team, idx) => {
       html += `<tr>
         <td><span class="${posClass(idx)}">${idx + 1}</span>${esc(team.name)}</td>`;
@@ -216,18 +223,30 @@
       stat_categories.forEach(cat => {
         const rank = team.ranks[cat.stat_id];
         const raw  = team.stats[cat.stat_id] ?? '-';
-        const cls  = rank != null ? rankClass(rank, n) : 'rank-bot';
-        const disp = rank != null ? fmtRank(rank) : '–';
-        html += `<td>
-          <span class="rank-badge ${cls}">${disp}</span>
-          <span class="stat-raw">${esc(raw)}</span>
-        </td>`;
+        if (rank == null) {
+          // Yahoo returned no value for this stat — flag it, don't rank it.
+          hasMissing = true;
+          html += `<td>
+            <span class="rank-badge rank-na" title="No value returned by Yahoo — scores 0 toward total">N/A</span>
+            <span class="stat-raw">${esc(raw)}</span>
+          </td>`;
+        } else {
+          html += `<td>
+            <span class="rank-badge ${rankClass(rank, n)}">${fmtRank(rank)}</span>
+            <span class="stat-raw">${esc(raw)}</span>
+          </td>`;
+        }
       });
 
       html += `<td>${fmtTotal(team.total)}</td></tr>`;
     });
 
     html += '</tbody></table></div>';
+
+    if (hasMissing) {
+      html += `<p class="na-note"><strong>N/A</strong> means Yahoo returned no value for that stat (e.g. a rate stat like ERA with no innings pitched). That team isn't ranked for it and scores <code>0</code> toward its total; the remaining teams are ranked among themselves.</p>`;
+    }
+
     container.innerHTML = html;
   }
 

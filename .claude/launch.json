@@ -4,8 +4,9 @@
     {
       "name": "flask-app",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "flask", "run", "--port", "5000"],
+      "runtimeArgs": ["-m", "flask", "run", "--port", "5000", "--cert=adhoc"],
       "port": 5000,
+      "url": "https://localhost:5000",
       "env": {
         "FLASK_APP": "app.py",
         "FLASK_DEBUG": "1"
