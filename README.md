@@ -36,3 +36,11 @@ Open `http://localhost:5000`, follow the setup banner to connect your Yahoo acco
 ## Usage
 
 Enter your **League ID** (the number in your Yahoo league URL) and the **week number**, then click **Get Rankings**.
+
+## Tests
+
+The ranking math and Yahoo response parsing are covered by unit tests (standard-library `unittest`, nothing to install):
+
+```
+python -m unittest
+```
