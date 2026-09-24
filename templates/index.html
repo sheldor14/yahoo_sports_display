@@ -35,39 +35,62 @@
     /* form */
     .form-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; }
     .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .7px; color: #888; }
-    .field input { border: 1.5px solid #e0e0e8; border-radius: 8px; padding: 9px 14px; font-size: 15px; width: 180px; transition: border-color .15s; outline: none; color: #1a1a2e; }
+    .field label, .field .label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .7px; color: #888; }
+    .field input { border: 1.5px solid #e0e0e8; border-radius: 8px; padding: 9px 14px; font-size: 15px; width: 180px; transition: border-color .15s; outline: none; color: #1a1a2e; height: 42px; }
+    .field input.narrow { width: 100px; }
     .field input:focus { border-color: #6001d2; box-shadow: 0 0 0 3px rgba(96,1,210,0.1); }
     .btn { height: 42px; padding: 0 22px; border-radius: 8px; border: none; font-size: 14px; font-weight: 700; cursor: pointer; transition: background .15s, opacity .15s; }
     .btn-primary { background: #6001d2; color: #fff; }
     .btn-primary:hover:not(:disabled) { background: #4a00a8; }
     .btn-primary:disabled { opacity: 0.55; cursor: default; }
+    .hidden { display: none !important; }
+
+    /* week / season toggle */
+    .segmented { display: inline-flex; border: 1.5px solid #e0e0e8; border-radius: 8px; overflow: hidden; height: 42px; }
+    .segmented input { position: absolute; opacity: 0; pointer-events: none; }
+    .segmented label { display: flex; align-items: center; padding: 0 16px; font-size: 14px; font-weight: 700; color: #666; cursor: pointer; text-transform: none; letter-spacing: 0; }
+    .segmented input:checked + label { background: #6001d2; color: #fff; }
+    .segmented input:focus-visible + label { box-shadow: inset 0 0 0 3px rgba(96,1,210,0.35); }
+
+    .league-info { margin-top: 14px; font-size: 13px; color: #777; min-height: 18px; }
+    .league-info strong { color: #1a1a2e; }
+    .league-info.error { color: #b91c1c; }
 
     /* results heading */
-    .results-meta { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+    .results-meta { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
     .results-meta h2 { font-size: 17px; font-weight: 800; }
     .week-label { font-size: 13px; color: #999; }
-    .hint { font-size: 11px; color: #bbb; margin-bottom: 14px; }
+    .hint { font-size: 11px; color: #999; margin-bottom: 14px; line-height: 1.6; }
 
     /* table */
     .table-wrap { overflow-x: auto; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead th {
       background: #f7f7fb;
-      padding: 9px 10px;
+      padding: 0;
       font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
       color: #999; border-bottom: 2px solid #e8e8f0;
-      white-space: nowrap; text-align: center; cursor: default;
+      white-space: nowrap; text-align: center;
     }
+    thead th button { all: unset; box-sizing: border-box; display: block; width: 100%; padding: 9px 10px; cursor: pointer; text-align: inherit; }
+    thead th button:hover { color: #6001d2; }
+    thead th button:focus-visible { outline: 2px solid #6001d2; outline-offset: -2px; }
+    thead th[aria-sort="ascending"], thead th[aria-sort="descending"] { color: #6001d2; }
     thead th:first-child { text-align: left; min-width: 170px; position: sticky; left: 0; background: #f7f7fb; z-index: 1; }
-    thead th:last-child { background: #6001d2; color: #fff; min-width: 70px; }
+    thead th.col-total { background: #6001d2; color: #fff; min-width: 70px; }
+    thead th.col-total button:hover { color: #fff; opacity: .85; }
     tbody tr { border-bottom: 1px solid #f0f0f6; }
     tbody tr:last-child { border-bottom: none; }
     tbody tr:hover td { background: #fafafd; }
     tbody td { padding: 9px 10px; text-align: center; vertical-align: middle; }
-    tbody td:first-child { text-align: left; font-weight: 700; position: sticky; left: 0; background: #fff; }
+    tbody td:first-child { text-align: left; font-weight: 700; position: sticky; left: 0; background: #fff; white-space: nowrap; }
     tbody tr:hover td:first-child { background: #fafafd; }
-    tbody td:last-child { font-weight: 800; font-size: 16px; color: #6001d2; }
+    tbody td.col-total { font-weight: 800; font-size: 16px; color: #6001d2; }
+    td.col-allplay { font-weight: 700; white-space: nowrap; }
+    td.col-avg { font-weight: 700; }
+
+    /* sort indicator */
+    .sort-ind { font-size: 9px; margin-left: 3px; }
 
     /* rank badge */
     .rank-badge { display: inline-block; min-width: 36px; padding: 3px 6px; border-radius: 5px; font-weight: 800; font-size: 13px; }
@@ -75,7 +98,7 @@
     .rank-mid  { background: #fef9c3; color: #a16207; }
     .rank-bot  { background: #fee2e2; color: #dc2626; }
     .rank-na   { background: #eef0f4; color: #9aa0ac; border: 1px dashed #cbd0da; }
-    .stat-raw  { display: block; font-size: 10px; color: #bbb; margin-top: 2px; line-height: 1; }
+    .stat-raw  { display: block; font-size: 10px; color: #aaa; margin-top: 2px; line-height: 1; }
 
     /* missing-data note under the table */
     .na-note { margin-top: 14px; font-size: 12px; color: #8a6d1f; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 9px 13px; }
@@ -110,7 +133,7 @@
 <header class="site-header">
   <div>
     <h1>⚾ Yahoo Fantasy Baseball Rankings</h1>
-    <p>Weekly head-to-head stat rankings across all teams</p>
+    <p>Head-to-head stat rankings across all teams, by week or across the season</p>
   </div>
 </header>
 
@@ -122,7 +145,7 @@
     <h3>First-time setup</h3>
     <ol>
       <li>Go to <strong>developer.yahoo.com/apps</strong> and create an app</li>
-      <li>Set the <strong>Redirect URI</strong> to <code>http://localhost:5000/auth/callback</code></li>
+      <li>Set the <strong>Redirect URI</strong> to <code>https://localhost:5000/auth/callback</code></li>
       <li>Enable the <strong>Fantasy Sports</strong> API permission (Read)</li>
       <li>Copy the Client ID and Client Secret into your <code>config.txt</code> file (see <code>config.example.txt</code>)</li>
       <li>Restart the server, then click <strong>Authenticate with Yahoo</strong></li>
@@ -144,19 +167,39 @@
   {% endif %}
 
   <!-- Search form -->
-  <div class="card">
+  <form class="card" id="form">
     <div class="form-row">
       <div class="field">
-        <label>League ID</label>
-        <input id="leagueId" type="text" placeholder="e.g. 12345" autocomplete="off" />
+        <label for="leagueId">League ID</label>
+        <input id="leagueId" type="text" inputmode="numeric" placeholder="e.g. 12345" autocomplete="off" />
       </div>
       <div class="field">
-        <label>Week</label>
-        <input id="week" type="number" placeholder="e.g. 8" min="1" max="26" />
+        <label for="season">Season</label>
+        <input id="season" class="narrow" type="text" inputmode="numeric" placeholder="Current" autocomplete="off" />
       </div>
-      <button class="btn btn-primary" id="fetchBtn" onclick="fetchRankings()">Get Rankings</button>
+      <div class="field">
+        <span class="label">View</span>
+        <div class="segmented" role="radiogroup" aria-label="View">
+          <input type="radio" name="mode" id="modeWeek" value="week" checked><label for="modeWeek">Single week</label>
+          <input type="radio" name="mode" id="modeSeason" value="season"><label for="modeSeason">Season</label>
+        </div>
+      </div>
+      <div class="field" data-mode="week">
+        <label for="week">Week</label>
+        <input id="week" class="narrow" type="number" placeholder="e.g. 8" min="1" max="30" />
+      </div>
+      <div class="field hidden" data-mode="season">
+        <label for="startWeek">From week</label>
+        <input id="startWeek" class="narrow" type="number" placeholder="1" min="1" max="30" />
+      </div>
+      <div class="field hidden" data-mode="season">
+        <label for="endWeek">To week</label>
+        <input id="endWeek" class="narrow" type="number" placeholder="e.g. 12" min="1" max="30" />
+      </div>
+      <button class="btn btn-primary" id="fetchBtn" type="submit">Get Rankings</button>
     </div>
-  </div>
+    <p class="league-info" id="leagueInfo" aria-live="polite"></p>
+  </form>
 
   <!-- Results -->
   <div id="results" class="card">
@@ -166,139 +209,356 @@
 </main>
 
 <script>
+  const IS_AUTHENTICATED = {{ is_authenticated|tojson }};
+  const $ = id => document.getElementById(id);
+
+  // ── Remembered inputs (per browser; the page works fine without them) ──────
+  const store = {
+    get(k) { try { return localStorage.getItem('ysd.' + k) || ''; } catch { return ''; } },
+    set(k, v) { try { localStorage.setItem('ysd.' + k, v); } catch { /* storage unavailable */ } },
+  };
+
+  // ── Formatting helpers ──────────────────────────────────────────────────────
   function esc(s) {
-    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  function rankClass(rank, n) {
+  // Colour a score where n is best and 1 is worst, relative to the n teams ranked.
+  function tierClass(score, n) {
     const third = n / 3;
-    if (rank > n - third) return 'rank-top';
-    if (rank > third)     return 'rank-mid';
+    if (score > n - third) return 'rank-top';
+    if (score > third)     return 'rank-mid';
     return 'rank-bot';
   }
 
-  function posClass(i) {
-    return ['pos pos-1','pos pos-2','pos pos-3'][i] ?? 'pos pos-n';
+  function posClass(place) {
+    return ['pos pos-1','pos pos-2','pos pos-3'][place - 1] ?? 'pos pos-n';
   }
 
-  function fmtRank(r) {
-    return Number.isInteger(r) ? r : r.toFixed(1);
+  function fmtNum(x) {
+    return Number.isInteger(x) ? x : x.toFixed(1);
   }
 
-  function fmtTotal(t) {
-    return Number.isInteger(t) ? t : t.toFixed(1);
+  function fmtRecord(r) {
+    return `${r.wins}-${r.losses}-${r.ties}`;
   }
 
-  function renderTable(data, container) {
-    const { week, teams, stat_categories } = data;
-    const n = teams.length;
+  function winPct(r) {
+    const games = r.wins + r.losses + r.ties;
+    return games ? (r.wins + r.ties / 2) / games : 0;
+  }
 
-    let html = `
-      <div class="results-meta">
-        <h2>Rankings</h2>
-        <span class="week-label">Week ${esc(week)} &nbsp;·&nbsp; ${n} teams</span>
-      </div>
-      <p class="hint">Score: 1 = worst, ${n} = best per stat &nbsp;·&nbsp; Ties share the average of their positions &nbsp;·&nbsp; ↑ higher is better &nbsp;·&nbsp; ↓ lower is better</p>
+  // Places by total, 1 = best; tied teams share a place.
+  function assignPlaces(teams) {
+    teams.forEach(t => { t._place = 1 + teams.filter(o => o.total > t.total).length; });
+  }
+
+  function teamCell(t) {
+    return `<td><span class="${posClass(t._place)}">${t._place}</span>${esc(t.name)}</td>`;
+  }
+
+  const allPlayCol = {
+    key: 'allplay', label: 'All-Play',
+    title: 'Record if this team had played every other team (W-L-T)',
+    value: t => winPct(t.all_play),
+    cell: t => `<td class="col-allplay" title="${(winPct(t.all_play) * 100).toFixed(1)}% win rate">${fmtRecord(t.all_play)}</td>`,
+  };
+
+  const nameCol = {
+    key: 'name', label: 'Team', ascFirst: true,
+    value: t => t.name.toLowerCase(),
+    cell: teamCell,
+  };
+
+  // ── Sortable table ──────────────────────────────────────────────────────────
+  // A view is {columns, rows, sort: {key, dir}, header, footer}; each column has
+  // value(row) for sorting (null sorts last) and cell(row) for its <td>.
+  let view = null;
+
+  function sortRows(rows, col, dir) {
+    const sign = dir === 'asc' ? 1 : -1;
+    return [...rows].sort((a, b) => {
+      const va = col.value(a), vb = col.value(b);
+      if (va == null && vb == null) return 0;
+      if (va == null) return 1;
+      if (vb == null) return -1;
+      return sign * (typeof va === 'string' ? va.localeCompare(vb) : va - vb);
+    });
+  }
+
+  function renderView() {
+    const { columns, rows, sort } = view;
+    const col = columns.find(c => c.key === sort.key);
+    const sorted = sortRows(rows, col, sort.dir);
+
+    const head = columns.map(c => {
+      const active = c.key === sort.key;
+      const aria = active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none';
+      const ind = active ? `<span class="sort-ind">${sort.dir === 'asc' ? '▲' : '▼'}</span>` : '';
+      return `<th class="${c.cls ?? ''}" aria-sort="${aria}" title="${esc(c.title ?? '')}">
+        <button type="button" data-sort="${esc(c.key)}">${c.labelHtml ?? esc(c.label)}${ind}</button></th>`;
+    }).join('');
+
+    const body = sorted.map(r => `<tr>${columns.map(c => c.cell(r)).join('')}</tr>`).join('');
+
+    $('results-content').innerHTML = `
+      ${view.header}
       <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Team</th>
-              ${stat_categories.map(c => {
-                const dir = c.sort_order === '1' ? '↑' : '↓';
-                return `<th title="${esc(c.name)}">${esc(c.display_name)}<span class="dir">${dir}</span></th>`;
-              }).join('')}
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
+        <table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>
+      </div>
+      ${view.footer ?? ''}`;
+  }
 
-    let hasMissing = false;
+  $('results-content').addEventListener('click', e => {
+    const btn = e.target.closest('button[data-sort]');
+    if (!btn || !view) return;
+    const key = btn.dataset.sort;
+    const col = view.columns.find(c => c.key === key);
+    if (view.sort.key === key) {
+      view.sort.dir = view.sort.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      view.sort = { key, dir: col.ascFirst ? 'asc' : 'desc' };
+    }
+    renderView();
+  });
 
-    teams.forEach((team, idx) => {
-      html += `<tr>
-        <td><span class="${posClass(idx)}">${idx + 1}</span>${esc(team.name)}</td>`;
+  function leagueTitle(league) {
+    return league?.name ? `${esc(league.name)} &nbsp;·&nbsp; ` : '';
+  }
 
-      stat_categories.forEach(cat => {
-        const rank = team.ranks[cat.stat_id];
-        const raw  = team.stats[cat.stat_id] ?? '-';
-        if (rank == null) {
-          // Yahoo returned no value for this stat — flag it, don't rank it.
-          hasMissing = true;
-          html += `<td>
-            <span class="rank-badge rank-na" title="No value returned by Yahoo — scores 0 toward total">N/A</span>
-            <span class="stat-raw">${esc(raw)}</span>
-          </td>`;
-        } else {
-          html += `<td>
-            <span class="rank-badge ${rankClass(rank, n)}">${fmtRank(rank)}</span>
-            <span class="stat-raw">${esc(raw)}</span>
-          </td>`;
-        }
-      });
+  // ── Single-week view ────────────────────────────────────────────────────────
+  function weekView(data) {
+    const { week, teams, stat_categories, league } = data;
+    const n = teams.length;
+    assignPlaces(teams);
 
-      html += `<td>${fmtTotal(team.total)}</td></tr>`;
+    // Colour each stat's ranks against the number of teams actually ranked for it.
+    const ranked = {};
+    stat_categories.forEach(c => {
+      ranked[c.stat_id] = teams.filter(t => t.ranks[c.stat_id] != null).length;
     });
 
-    html += '</tbody></table></div>';
+    const hasMissing = teams.some(t => stat_categories.some(c => t.ranks[c.stat_id] == null));
 
-    if (hasMissing) {
-      html += `<p class="na-note"><strong>N/A</strong> means Yahoo returned no value for that stat (e.g. a rate stat like ERA with no innings pitched). That team isn't ranked for it and scores <code>0</code> toward its total; the remaining teams are ranked among themselves.</p>`;
+    const statCols = stat_categories.map(c => ({
+      key: 'stat:' + c.stat_id,
+      labelHtml: `${esc(c.display_name)}<span class="dir">${c.sort_order === '1' ? '↑' : '↓'}</span>`,
+      title: c.name,
+      value: t => t.ranks[c.stat_id],
+      cell: t => {
+        const rank = t.ranks[c.stat_id];
+        const raw = t.stats[c.stat_id] ?? '-';
+        const badge = rank == null
+          // Yahoo returned no value for this stat — flag it, don't rank it.
+          ? `<span class="rank-badge rank-na" title="No value returned by Yahoo — scores 0 toward total">N/A</span>`
+          : `<span class="rank-badge ${tierClass(rank, ranked[c.stat_id])}">${fmtNum(rank)}</span>`;
+        return `<td>${badge}<span class="stat-raw">${esc(raw)}</span></td>`;
+      },
+    }));
+
+    return {
+      columns: [
+        nameCol,
+        ...statCols,
+        allPlayCol,
+        { key: 'total', label: 'Total', cls: 'col-total', value: t => t.total,
+          cell: t => `<td class="col-total">${fmtNum(t.total)}</td>` },
+      ],
+      rows: teams,
+      sort: { key: 'total', dir: 'desc' },
+      header: `
+        <div class="results-meta">
+          <h2>Rankings</h2>
+          <span class="week-label">${leagueTitle(league)}Week ${esc(week)} &nbsp;·&nbsp; ${n} teams</span>
+        </div>
+        <p class="hint">Score: 1 = worst, ${n} = best per stat &nbsp;·&nbsp; Ties share the average of their positions &nbsp;·&nbsp; ↑ higher is better &nbsp;·&nbsp; ↓ lower is better<br>
+          All-Play: the record each team would have had against every other team this week &nbsp;·&nbsp; Click a column heading to sort</p>`,
+      footer: hasMissing
+        ? `<p class="na-note"><strong>N/A</strong> means Yahoo returned no value for that stat (e.g. a rate stat like ERA with no innings pitched). That team isn't ranked for it and scores <code>0</code> toward its total; the remaining teams are ranked among themselves. In All-Play it loses that category.</p>`
+        : '',
+    };
+  }
+
+  // ── Season view ─────────────────────────────────────────────────────────────
+  function seasonView(data) {
+    const { weeks, teams, league } = data;
+    const n = teams.length;
+    assignPlaces(teams);
+
+    const weekCols = weeks.map(w => ({
+      key: 'week:' + w,
+      label: 'W' + w,
+      title: `Week ${w} total`,
+      value: t => t.weekly[w]?.total ?? null,
+      cell: t => {
+        const wk = t.weekly[w];
+        if (!wk) return `<td><span class="rank-badge rank-na">–</span></td>`;
+        return `<td title="Finished #${wk.place} in week ${w}">
+          <span class="rank-badge ${tierClass(n + 1 - wk.place, n)}">${fmtNum(wk.total)}</span>
+          <span class="stat-raw">#${wk.place}</span></td>`;
+      },
+    }));
+
+    const range = weeks.length === 1 ? `Week ${weeks[0]}` : `Weeks ${weeks[0]}–${weeks[weeks.length - 1]}`;
+
+    return {
+      columns: [
+        nameCol,
+        ...weekCols,
+        { key: 'avg', label: 'Avg', title: 'Average weekly total', value: t => t.average,
+          cell: t => `<td class="col-avg">${t.average.toFixed(1)}</td>` },
+        allPlayCol,
+        { key: 'total', label: 'Total', cls: 'col-total', title: 'Sum of weekly totals', value: t => t.total,
+          cell: t => `<td class="col-total">${fmtNum(t.total)}</td>` },
+      ],
+      rows: teams,
+      sort: { key: 'total', dir: 'desc' },
+      header: `
+        <div class="results-meta">
+          <h2>Season Rankings</h2>
+          <span class="week-label">${leagueTitle(league)}${range} &nbsp;·&nbsp; ${n} teams</span>
+        </div>
+        <p class="hint">Each week column is that team's weekly total (sum of its stat scores) and its place that week &nbsp;·&nbsp;
+          Total adds up the weekly totals &nbsp;·&nbsp; All-Play combines every week's all-play record &nbsp;·&nbsp; Click a column heading to sort</p>`,
+    };
+  }
+
+  // ── League info (name, current week) ────────────────────────────────────────
+  let leagueMeta = null;
+  let leagueReq = 0;
+
+  function leagueParams() {
+    const p = new URLSearchParams({ league_id: $('leagueId').value.trim() });
+    const season = $('season').value.trim();
+    if (season) p.set('season', season);
+    return p;
+  }
+
+  async function loadLeague() {
+    const info = $('leagueInfo');
+    const leagueId = $('leagueId').value.trim();
+    leagueMeta = null;
+    info.classList.remove('error');
+    info.textContent = '';
+    if (!IS_AUTHENTICATED || !/^\d+$/.test(leagueId)) return;
+
+    const req = ++leagueReq;
+    info.textContent = 'Looking up league…';
+    try {
+      const res = await fetch(`/api/league?${leagueParams()}`);
+      const data = await res.json();
+      if (req !== leagueReq) return;  // a newer lookup has started
+      if (!res.ok) {
+        info.classList.add('error');
+        info.textContent = data.error || 'Couldn’t load that league.';
+        return;
+      }
+      leagueMeta = data;
+      const last = data.is_finished ? data.end_week : data.current_week;
+      const status = data.is_finished ? 'season finished' : `current week ${data.current_week}`;
+      info.innerHTML = `<strong>${esc(data.name)}</strong> &nbsp;·&nbsp; ${esc(data.season)} &nbsp;·&nbsp; ${data.num_teams ?? '?'} teams &nbsp;·&nbsp; weeks ${data.start_week}–${data.end_week} &nbsp;·&nbsp; ${status}`;
+
+      // Default the week pickers to this league's schedule.
+      for (const id of ['week', 'startWeek', 'endWeek']) {
+        $(id).min = data.start_week ?? 1;
+        $(id).max = last ?? 30;
+      }
+      $('week').value = last ?? '';
+      $('startWeek').value = data.start_week ?? 1;
+      $('endWeek').value = last ?? '';
+    } catch (err) {
+      if (req !== leagueReq) return;
+      info.classList.add('error');
+      info.textContent = 'Couldn’t reach the server to look up that league.';
     }
+  }
 
-    container.innerHTML = html;
+  // ── Fetching rankings ───────────────────────────────────────────────────────
+  function mode() {
+    return document.querySelector('input[name="mode"]:checked').value;
+  }
+
+  function showMode() {
+    const m = mode();
+    document.querySelectorAll('[data-mode]').forEach(el => el.classList.toggle('hidden', el.dataset.mode !== m));
+  }
+
+  function showError(title, html) {
+    view = null;
+    $('results').style.display = 'block';
+    $('results-content').innerHTML = `<div class="error-box"><strong>${esc(title)}</strong>${html}</div>`;
   }
 
   async function fetchRankings() {
-    const leagueId = document.getElementById('leagueId').value.trim();
-    const week     = document.getElementById('week').value.trim();
-    const btn      = document.getElementById('fetchBtn');
-    const resultsDiv   = document.getElementById('results');
-    const contentDiv   = document.getElementById('results-content');
+    const btn = $('fetchBtn');
+    const params = leagueParams();
+    const m = mode();
+    let url;
 
-    if (!leagueId || !week) {
-      alert('Please enter both a League ID and a week number.');
-      return;
+    if (!params.get('league_id')) return showError('Missing League ID', 'Enter your league ID (the number in your Yahoo league URL).');
+
+    if (m === 'week') {
+      const week = $('week').value.trim();
+      if (!week) return showError('Missing week', 'Enter a week number.');
+      params.set('week', week);
+      url = `/api/rankings?${params}`;
+    } else {
+      const start = $('startWeek').value.trim(), end = $('endWeek').value.trim();
+      if (!start || !end) return showError('Missing weeks', 'Enter the first and last week to include.');
+      params.set('start_week', start);
+      params.set('end_week', end);
+      url = `/api/season?${params}`;
     }
+
+    store.set('leagueId', params.get('league_id'));
+    store.set('season', params.get('season') ?? '');
 
     btn.disabled = true;
     btn.textContent = 'Loading…';
-    resultsDiv.style.display = 'block';
-    contentDiv.innerHTML = `
+    $('results').style.display = 'block';
+    $('results-content').innerHTML = `
       <div class="loading-box">
         <div class="spinner"></div>
-        <p>Fetching data from Yahoo…</p>
+        <p>${m === 'season' ? 'Fetching every week from Yahoo — this can take a few seconds…' : 'Fetching data from Yahoo…'}</p>
       </div>`;
 
     try {
-      const res  = await fetch(`/api/rankings?league_id=${encodeURIComponent(leagueId)}&week=${encodeURIComponent(week)}`);
+      const res  = await fetch(url);
       const data = await res.json();
 
       if (!res.ok) {
         if (data.needs_auth) {
-          contentDiv.innerHTML = `<div class="error-box"><strong>Authentication required</strong><a href="/auth/start">Connect your Yahoo account →</a></div>`;
+          showError('Authentication required', '<a href="/auth/start">Connect your Yahoo account →</a>');
         } else {
-          contentDiv.innerHTML = `<div class="error-box"><strong>Error</strong>${esc(data.error || 'Unknown error')}</div>`;
+          showError('Error', esc(data.error || 'Unknown error'));
         }
         return;
       }
 
-      renderTable(data, contentDiv);
+      view = m === 'week' ? weekView(data) : seasonView(data);
+      renderView();
     } catch (err) {
-      contentDiv.innerHTML = `<div class="error-box"><strong>Network error</strong>${esc(err.message)}</div>`;
+      showError('Network error', esc(err.message));
     } finally {
       btn.disabled = false;
       btn.textContent = 'Get Rankings';
     }
   }
 
-  // Submit on Enter
-  ['leagueId', 'week'].forEach(id => {
-    document.getElementById(id)?.addEventListener('keydown', e => {
-      if (e.key === 'Enter') fetchRankings();
-    });
-  });
+  // ── Wiring ──────────────────────────────────────────────────────────────────
+  $('form').addEventListener('submit', e => { e.preventDefault(); fetchRankings(); });
+  $('leagueId').addEventListener('change', loadLeague);
+  $('season').addEventListener('change', loadLeague);
+  document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', () => {
+    store.set('mode', mode());
+    showMode();
+  }));
+
+  $('leagueId').value = store.get('leagueId');
+  $('season').value = store.get('season');
+  if (store.get('mode') === 'season') $('modeSeason').checked = true;
+  showMode();
+  loadLeague();
 </script>
 
 </body>
