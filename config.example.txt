@@ -1,6 +1,6 @@
 ; Yahoo Developer App credentials
 ; Create an app at https://developer.yahoo.com/apps/
-; Set Redirect URI to: http://localhost:5000/auth/callback
+; Set Redirect URI to: https://localhost:5000/auth/callback
 ; Enable Fantasy Sports API permission (Read)
 [yahoo]
 client_id = your_client_id_here
